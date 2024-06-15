@@ -4,3 +4,9 @@ export interface Book {
     author?: string;
     isbn?: string;
 }
+
+export interface CreateBook {
+    title?: string;
+    author?: string;
+    isbn?: string;
+}

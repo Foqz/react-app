@@ -1,4 +1,4 @@
-import {Book} from "./types/Book";
+import {Book, CreateBook} from "./types/Book";
 import http from "../../http-common";
 
 const getAllBooks = () => {
@@ -9,9 +9,14 @@ const getBookById = (id: string) => {
     return http.get(`/books/${id}`, {})
 }
 
+const createBook = (createBook: CreateBook) => {
+    return http.post("/books", createBook)
+}
+
 const BookService = {
     getAllBooks,
-    getBookById
+    getBookById,
+    createBook
 }
 
 export default BookService;
