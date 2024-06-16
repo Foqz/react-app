@@ -1,32 +1,28 @@
 import {useEffect, useState} from "react";
-import {Book, CreateBook} from "./types/Book";
+import {Book} from "./types/Book";
 import BookService from "./BookService";
+import EditIcon from '@mui/icons-material/Edit';
 import {
     Box,
     Button,
+    IconButton,
     Paper,
     Table,
     TableBody,
     TableCell,
     TableContainer,
     TableHead,
-    TableRow,
-    TextField
+    TableRow
 } from "@mui/material";
+import EditBook from "./EditBook";
 
 const BookList = () => {
     const [books, setBooks] = useState<Book[]>([]);
-    const [formData, setFormData] = useState<CreateBook>(
-        {
-            title: "",
-            author: "",
-            isbn: ""
-        }
-    );
+    const [modalOpened, setModalOpened] = useState<boolean>(false);
 
     useEffect(() => {
         fetchBooks();
-    }, [])
+    }, [modalOpened])
 
     const fetchBooks = () => {
         BookService.getAllBooks()
@@ -37,65 +33,53 @@ const BookList = () => {
             console.log(error);
         })
     }
-
-    const submitForm = () => {
-        console.log(formData);
-        BookService.createBook(formData)
-            .then(r => fetchBooks()).catch((error: Error) => {
-            console.log(error);
-        })
+    const handleModalOpen = () => {
+        setModalOpened(true)
     }
 
     return (
         <>
-            <TableContainer component={Paper}>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>Book ID</TableCell>
-                            <TableCell>Book Title</TableCell>
-                            <TableCell>Title</TableCell>
-                            <TableCell>ISBN</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {books.map((book) => (
-                            <TableRow key={book.id}>
-                                <TableCell>{book.id}</TableCell>
-                                <TableCell>{book.title}</TableCell>
-                                <TableCell>{book.author}</TableCell>
-                                <TableCell>{book.isbn}</TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
             <Box m={5}>
-                <form onSubmit={submitForm}>
-                    <TextField
-                        label="Title"
-                        variant="outlined"
-                        name="title"
-                        value={formData.title}
-                        onChange={(e) => setFormData({...formData, title: e.target.value})}
-                    />
-                    <TextField
-                        label="Author"
-                        variant="outlined"
-                        name="author"
-                        value={formData.author}
-                        onChange={(e) => setFormData({...formData, author: e.target.value})}
-                    />
-                    <TextField
-                        label="isbn"
-                        variant="outlined"
-                        name="isbn"
-                        value={formData.isbn}
-                        onChange={(e) => setFormData({...formData, isbn: e.target.value})}
-                    />
-                    <Button variant="outlined" onClick={() => submitForm()}>Submit</Button>
-                </form>
+                <TableContainer component={Paper}>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Book ID</TableCell>
+                                <TableCell>Book Title</TableCell>
+                                <TableCell>Author</TableCell>
+                                <TableCell>ISBN</TableCell>
+                                <TableCell>Acions</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {books.map((book) => (
+                                <TableRow key={book.id}>
+                                    <TableCell>{book.id}</TableCell>
+                                    <TableCell>{book.title}</TableCell>
+                                    <TableCell>{book.author}</TableCell>
+                                    <TableCell>{book.isbn}</TableCell>
+                                    <TableCell>
+                                        <IconButton>
+                                            <EditIcon/>
+                                        </IconButton>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+                <Button variant="outlined" onClick={handleModalOpen}>Add book</Button>
             </Box>
+
+            <EditBook
+                modalOpened={modalOpened}
+                setModalOpened={setModalOpened}
+                bookProps={{
+                    title: "",
+                    author: "",
+                    isbn: ""
+                }}
+             ></EditBook>
         </>
     )
 }
