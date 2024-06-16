@@ -1,7 +1,8 @@
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Book} from "./types/Book";
 import BookService from "./BookService";
 import EditIcon from '@mui/icons-material/Edit';
+import ClearIcon from '@mui/icons-material/Clear';
 import {
     Box,
     Button,
@@ -45,8 +46,17 @@ const BookList = () => {
         setModalOpened(true)
     }
 
+    const handleDeleteBook = (id: number) => {
+        BookService.deleteBook(id).then().then(r => {
+                console.log("Book deleted")
+                fetchBooks()
+            }
+        ).catch((error: Error) => {
+            console.log(error)
+        })
+    }
+
     const handleUpdateBook = (bookProps: Book) => {
-        setModalProps({})
         setModalProps({
             id: bookProps.id,
             author: bookProps.author,
@@ -86,6 +96,9 @@ const BookList = () => {
                                             }
                                         )}>
                                             <EditIcon/>
+                                        </IconButton>
+                                        <IconButton onClick={() => handleDeleteBook(book.id || 0)}>
+                                            <ClearIcon/>
                                         </IconButton>
                                     </TableCell>
                                 </TableRow>

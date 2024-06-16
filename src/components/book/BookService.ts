@@ -21,11 +21,16 @@ const updateBook = (bookProps: Book) => {
     })
 }
 
+const deleteBook = (id: number) => {
+    return http.delete(`/books/${id}`)
+}
+
 const BookService = {
     getAllBooks,
     getBookById,
     createBook,
-    updateBook
+    updateBook,
+    deleteBook
 }
 
 export default BookService;

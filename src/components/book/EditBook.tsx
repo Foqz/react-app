@@ -40,7 +40,6 @@ const EditBook = (modalProps: ModalProps) => {
             console.warn("Form data undefined")
             return
         }
-        debugger;
         if (formData.id !== undefined && formData.id > 0) {
             BookService.updateBook(formData).then(r =>
                 console.log("Book updated")
