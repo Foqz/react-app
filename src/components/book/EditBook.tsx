@@ -1,4 +1,4 @@
-import {Book, CreateBook} from "./types/Book";
+import {Book} from "./types/Book";
 import {Box, Button, Modal, TextField} from "@mui/material";
 import BookService from "./BookService";
 import React, {useEffect, useState} from "react";
@@ -11,14 +11,17 @@ interface ModalProps {
 
 const EditBook = (modalProps: ModalProps) => {
     const {modalOpened, bookProps, setModalOpened} = modalProps;
+    const [formData, setFormData] = useState<Book>();
 
-    const [formData, setFormData] = useState<CreateBook>(
-        {
-            title: "",
-            author: "",
-            isbn: ""
-        }
-    );
+    useEffect(() => {
+        setFormData({
+            id: bookProps.id,
+            title: bookProps.title,
+            author: bookProps.author,
+            isbn: bookProps.isbn
+        })
+    }, [bookProps.author, bookProps.id, bookProps.isbn, bookProps.title]);
+    
     const modalWrapperStyle = {
         position: 'absolute' as 'absolute',
         top: '50%',
@@ -31,19 +34,27 @@ const EditBook = (modalProps: ModalProps) => {
         p: 4,
     };
 
-    useEffect(() => {
-        formData.title = bookProps.title
-        formData.author = bookProps.author
-        formData.isbn = bookProps.isbn
-    });
-
     const submitForm = () => {
         console.log(formData);
-        BookService.createBook(formData)
-            .then(r => console.log("Book created"))
-            .catch((error: Error) => {
-                console.log(error);
+        if (!formData) {
+            console.warn("Form data undefined")
+            return
+        }
+        debugger;
+        if (formData.id !== undefined && formData.id > 0) {
+            BookService.updateBook(formData).then(r =>
+                console.log("Book updated")
+            ).catch((error: Error) => {
+                console.log(error)
             })
+        } else {
+            BookService.createBook(formData)
+                .then(r => console.log("Book created"))
+                .catch((error: Error) => {
+                    console.log(error);
+                })
+        }
+
         setModalOpened(false);
     }
 
@@ -55,21 +66,21 @@ const EditBook = (modalProps: ModalProps) => {
                         label="Title"
                         variant="outlined"
                         name="title"
-                        value={formData.title}
+                        value={formData?.title || ""}
                         onChange={(e) => setFormData({...formData, title: e.target.value})}
                     />
                     <TextField
                         label="Author"
                         variant="outlined"
                         name="author"
-                        value={formData.author}
+                        value={formData?.author || ""}
                         onChange={(e) => setFormData({...formData, author: e.target.value})}
                     />
                     <TextField
                         label="isbn"
                         variant="outlined"
                         name="isbn"
-                        value={formData.isbn}
+                        value={formData?.isbn || ""}
                         onChange={(e) => setFormData({...formData, isbn: e.target.value})}
                     />
                     <Button sx={{

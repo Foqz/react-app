@@ -13,10 +13,19 @@ const createBook = (createBook: CreateBook) => {
     return http.post("/books", createBook)
 }
 
+const updateBook = (bookProps: Book) => {
+    return http.put(`/books/${bookProps.id}`, {
+        title: bookProps.title,
+        author: bookProps.author,
+        isbn: bookProps.isbn
+    })
+}
+
 const BookService = {
     getAllBooks,
     getBookById,
-    createBook
+    createBook,
+    updateBook
 }
 
 export default BookService;

@@ -19,6 +19,7 @@ import EditBook from "./EditBook";
 const BookList = () => {
     const [books, setBooks] = useState<Book[]>([]);
     const [modalOpened, setModalOpened] = useState<boolean>(false);
+    const [modalProps, setModalProps] = useState<Book>()
 
     useEffect(() => {
         fetchBooks();
@@ -33,7 +34,25 @@ const BookList = () => {
             console.log(error);
         })
     }
-    const handleModalOpen = () => {
+
+    const handleAddNewBook = () => {
+        setModalProps({
+            id: 0,
+            title: "",
+            author: "",
+            isbn: ""
+        })
+        setModalOpened(true)
+    }
+
+    const handleUpdateBook = (bookProps: Book) => {
+        setModalProps({})
+        setModalProps({
+            id: bookProps.id,
+            author: bookProps.author,
+            title: bookProps.title,
+            isbn: bookProps.isbn
+        })
         setModalOpened(true)
     }
 
@@ -48,7 +67,7 @@ const BookList = () => {
                                 <TableCell>Book Title</TableCell>
                                 <TableCell>Author</TableCell>
                                 <TableCell>ISBN</TableCell>
-                                <TableCell>Acions</TableCell>
+                                <TableCell>Actions</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -59,7 +78,13 @@ const BookList = () => {
                                     <TableCell>{book.author}</TableCell>
                                     <TableCell>{book.isbn}</TableCell>
                                     <TableCell>
-                                        <IconButton>
+                                        <IconButton onClick={() => handleUpdateBook({
+                                                id: book.id,
+                                                title: book.title,
+                                                author: book.author,
+                                                isbn: book.isbn
+                                            }
+                                        )}>
                                             <EditIcon/>
                                         </IconButton>
                                     </TableCell>
@@ -68,18 +93,14 @@ const BookList = () => {
                         </TableBody>
                     </Table>
                 </TableContainer>
-                <Button variant="outlined" onClick={handleModalOpen}>Add book</Button>
+                <Button variant="outlined" onClick={handleAddNewBook}>Add book</Button>
             </Box>
 
             <EditBook
                 modalOpened={modalOpened}
                 setModalOpened={setModalOpened}
-                bookProps={{
-                    title: "",
-                    author: "",
-                    isbn: ""
-                }}
-             ></EditBook>
+                bookProps={modalProps || {}}
+            ></EditBook>
         </>
     )
 }
